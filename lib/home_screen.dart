@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'maps.dart';
 
 class HomeScreen extends StatefulWidget {
   @override
@@ -7,11 +8,15 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   @override
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
-      body: Column(),
-    );
+        appBar: AppBar(
+          title: Text(
+            'MC LABS MAPS',
+            style: TextStyle(color: Colors.white),
+          ),
+          backgroundColor: Colors.black,
+        ),
+        body: Maps());
   }
 }

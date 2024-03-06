@@ -31,7 +31,7 @@ class _LoginPageState extends State<LoginPage> {
       ElegantNotification.success(
               width: MediaQuery.of(context).size.width,
               toastDuration: Duration(seconds: 3000),
-              title: Text("Twitter Clone"),
+              title: Text("MC LAB"),
               description: Text("You have succesfully signed-in!"))
           .show(context);
     } catch (e) {
