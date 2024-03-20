@@ -1,43 +1,109 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 
-import 'package:webview_flutter/webview_flutter.dart';
+import 'package:flutter_map/flutter_map.dart';
+import 'package:latlong2/latlong.dart';
+import 'package:http/http.dart' as http;
 
 class Maps extends StatefulWidget {
   @override
-  _Maps createState() => _Maps();
+  _MapScreenState createState() => _MapScreenState();
 }
 
-class _Maps extends State<Maps> {
-  final String url =
-      'https://www.google.co.in/maps/@19.2251777,72.7674201,14z?entry=ttu';
-  late WebViewController _webViewController;
+class _MapScreenState extends State<Maps> {
+  MapController _mapController = MapController();
+  List<Marker> _markers = [];
 
-  WebViewController controller = WebViewController()
-    ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    ..setBackgroundColor(const Color(0x00000000))
-    ..setNavigationDelegate(
-      NavigationDelegate(
-        onProgress: (int progress) {
-          // Update loading bar.
-        },
-        onPageStarted: (String url) {},
-        onPageFinished: (String url) {},
-        onWebResourceError: (WebResourceError error) {},
-        onNavigationRequest: (NavigationRequest request) {
-          if (request.url.startsWith('https://www.youtube.com/')) {
-            return NavigationDecision.prevent;
-          }
-          return NavigationDecision.navigate;
-        },
-      ),
-    )
-    ..loadRequest(Uri.parse(
-        'https://www.bing.com/maps/?cp=19.082428%7E72.88595&lvl=11.0'));
+  void _searchLocation(String query) async {
+    final url = 'https://nominatim.openstreetmap.org/search?q=$query&format=json';
+
+    final response = await http.get(Uri.parse(url));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+
+      if (data != null && data.isNotEmpty) {
+        final location = data[0];
+        final latitude = double.parse(location['lat']);
+        final longitude = double.parse(location['lon']);
+
+        _markers.clear();
+
+
+        _markers.add(
+          Marker(
+            width: 80.0,
+            height: 80.0,
+            point: LatLng(latitude, longitude),
+            child: Icon(Icons.location_on, color: Colors.green, size: 50),
+
+          ),
+        );
+
+
+        _mapController.move(LatLng(latitude, longitude), 10.0);
+      } else {
+        // Handle no results found
+      }
+    } else {
+      // Handle API call failure
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: WebViewWidget(controller: controller),
+
+      body: Column(
+        children: [
+          Expanded(
+            child: FlutterMap(
+              mapController: _mapController,
+              options: MapOptions(
+                initialCenter: LatLng(19.0728, 72.8999),
+                zoom: 10.0,
+              ),
+              children: [
+                TileLayer(
+                  urlTemplate: 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
+                  subdomains: ['a', 'b', 'c'],
+                ),
+                MarkerLayer(markers: _markers),
+              ],
+
+            ),
+          ),
+
+          Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: TextField(
+              decoration: InputDecoration(
+                hintText: 'Search for a location',
+                suffixIcon: Icon(Icons.search),
+              ),
+              onSubmitted: _searchLocation,
+            ),
+          ),
+    floatingActionButton: Column(
+    mainAxisAlignment: MainAxisAlignment.end,
+    crossAxisAlignment: CrossAxisAlignment.end,
+    children: [
+    FloatingActionButton(
+    onPressed: () {
+    // Add your action here
+    },
+    child: Icon(Icons.add),
+    ),
+    SizedBox(height: 16), // Adjust spacing between FABs
+    FloatingActionButton(
+    onPressed: () {
+    // Add your action here
+    },
+    child: Icon(Icons.remove),
+    ),
+        ],
+      ),
     );
   }
 }

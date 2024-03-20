@@ -123,7 +123,7 @@ class _SignUpState extends State<SignUp> {
                     try {
                       await addUser();
                       Navigator.push(context,
-                          MaterialPageRoute(builder: (context) => LoginPage()));
+                          MaterialPageRoute(builder: (context) => JustLogin()));
                       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text(
                           "User added",
@@ -179,7 +179,7 @@ class _SignUpState extends State<SignUp> {
                 child: TextButton(
                   onPressed: () {
                     Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                        MaterialPageRoute(builder: (context) => JustLogin()));
                   },
                   child: Text(
                     "Sign-in!",

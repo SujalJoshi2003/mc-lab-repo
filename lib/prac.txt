@@ -1,10 +1,13 @@
-import "package:flutter/material.dart";
-import 'package:learning_flutter/sign_up.dart';
+import 'package:flutter/material.dart';
+import 'package:twitter_clone/login/forgot_password.dart';
+import 'package:twitter_clone/login/sign_up.dart';
+import 'package:video_player/video_player.dart';
+import 'background_video.dart';
+import "package:twitter_clone/screens/home_screen.dart";
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:learning_flutter/home_screen.dart';
-import 'package:elegant_notification/elegant_notification.dart';
 
 class JustLogin extends StatefulWidget {
+  const JustLogin({Key? key}) : super(key: key);
   @override
   JustLoginState createState() => JustLoginState();
 }
@@ -12,6 +15,8 @@ class JustLogin extends StatefulWidget {
 class JustLoginState extends State<JustLogin> {
   TextEditingController _email = TextEditingController();
   TextEditingController _password = TextEditingController();
+  final VideoPlayerController _controller =
+      VideoControllerSingleton().controller;
   FirebaseAuth _auth = FirebaseAuth.instance;
 
   Future<void> signIn() async {
@@ -28,32 +33,38 @@ class JustLoginState extends State<JustLogin> {
         (route) => false,
       );
 
-      ElegantNotification.success(
-              width: MediaQuery.of(context).size.width,
-              toastDuration: Duration(seconds: 3000),
-              title: Text("MC LAB"),
-              description: Text("You have succesfully signed-in!"))
-          .show(context);
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text(
+          "Signed-in",
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        behavior: SnackBarBehavior.floating,
+      ));
     } catch (e) {
       final errorMessage = "An error occurred: $e";
 
       final snackBarMessage = errorMessage.length > 50
           ? "An error occurred. Please check the details."
           : errorMessage;
-      ElegantNotification.success(
-              width: MediaQuery.of(context).size.width,
-              toastDuration: Duration(seconds: 3000),
-              title: Text("Twitter Clone"),
-              description: Text(snackBarMessage))
-          .show(context);
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          snackBarMessage,
+          style: TextStyle(color: Colors.black),
+        ),
+        backgroundColor: Colors.white,
+        behavior: SnackBarBehavior.floating,
+      ));
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Material(
-      child: Column(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
         children: [
+          VideoPlayer(_controller),
           SingleChildScrollView(
             child: Column(
               children: [
@@ -66,7 +77,7 @@ class JustLoginState extends State<JustLogin> {
                   child: Text(
                     "Sign in to your Account",
                     style: TextStyle(
-                        color: Colors.black,
+                        color: Colors.white,
                         fontSize: 20,
                         fontWeight: FontWeight.bold),
                   ),
@@ -77,13 +88,13 @@ class JustLoginState extends State<JustLogin> {
                 Container(
                   padding: EdgeInsets.all(10),
                   child: TextField(
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                     controller: _email,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15)),
                       hintText: 'Email',
-                      hintStyle: TextStyle(color: Colors.black),
+                      hintStyle: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -93,14 +104,14 @@ class JustLoginState extends State<JustLogin> {
                 Container(
                   padding: EdgeInsets.all(10),
                   child: TextField(
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                     obscureText: true,
                     controller: _password,
                     decoration: InputDecoration(
                       border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(15)),
                       hintText: 'Password',
-                      hintStyle: TextStyle(color: Colors.black),
+                      hintStyle: TextStyle(color: Colors.white),
                     ),
                   ),
                 ),
@@ -114,7 +125,7 @@ class JustLoginState extends State<JustLogin> {
                     onPressed: signIn,
                     style: ButtonStyle(
                       backgroundColor:
-                          MaterialStateProperty.all<Color>(Colors.black),
+                          MaterialStateProperty.all<Color>(Colors.white),
                       shape: MaterialStateProperty.all<OutlinedBorder>(
                         RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(15),
@@ -122,7 +133,7 @@ class JustLoginState extends State<JustLogin> {
                       ),
                     ),
                     child:
-                        Text('Sign-in', style: TextStyle(color: Colors.white)),
+                        Text('Sign-in', style: TextStyle(color: Colors.black)),
                   ),
                 ),
                 SizedBox(
@@ -130,14 +141,14 @@ class JustLoginState extends State<JustLogin> {
                 ),
                 TextButton(
                   onPressed: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(builder: (context) => ForgotPassword()),
-                    // );
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => ForgotPassword()),
+                    );
                   },
                   child: Text(
                     "Forgot Password",
-                    style: TextStyle(color: Colors.black),
+                    style: TextStyle(color: Colors.white),
                   ),
                 ),
                 SizedBox(
@@ -148,7 +159,7 @@ class JustLoginState extends State<JustLogin> {
                   padding: EdgeInsets.all(15),
                   child: Text(
                     "Don't have an account",
-                    style: TextStyle(color: Colors.black, fontSize: 20.0),
+                    style: TextStyle(color: Colors.grey, fontSize: 20.0),
                   ),
                 ),
                 TextButton(
@@ -157,7 +168,7 @@ class JustLoginState extends State<JustLogin> {
                           MaterialPageRoute(builder: (context) => SignUp()));
                     },
                     child:
-                        Text("Sign Up", style: TextStyle(color: Colors.black)))
+                        Text("Sign Up", style: TextStyle(color: Colors.white)))
               ],
             ),
           ),
