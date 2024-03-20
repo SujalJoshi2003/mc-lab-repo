@@ -1,7 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-
+import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:http/http.dart' as http;
@@ -70,6 +70,20 @@ class _MapScreenState extends State<Maps> {
                   subdomains: ['a', 'b', 'c'],
                 ),
                 MarkerLayer(markers: _markers),
+                CurrentLocationLayer(
+                  followOnLocationUpdate: FollowOnLocationUpdate.always,
+                  turnOnHeadingUpdate: TurnOnHeadingUpdate.never,
+                  style: LocationMarkerStyle(
+                    marker: const DefaultLocationMarker(
+                      child: Icon(
+                        Icons.navigation,
+                        color: Colors.white,
+                      ),
+                    ),
+                    markerSize: const Size(40, 40),
+                    markerDirection: MarkerDirection.heading,
+                  ),
+                ),
               ],
 
             ),
@@ -85,25 +99,8 @@ class _MapScreenState extends State<Maps> {
               onSubmitted: _searchLocation,
             ),
           ),
-    floatingActionButton: Column(
-    mainAxisAlignment: MainAxisAlignment.end,
-    crossAxisAlignment: CrossAxisAlignment.end,
-    children: [
-    FloatingActionButton(
-    onPressed: () {
-    // Add your action here
-    },
-    child: Icon(Icons.add),
+    ],
     ),
-    SizedBox(height: 16), // Adjust spacing between FABs
-    FloatingActionButton(
-    onPressed: () {
-    // Add your action here
-    },
-    child: Icon(Icons.remove),
-    ),
-        ],
-      ),
     );
   }
 }
